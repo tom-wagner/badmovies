@@ -5,24 +5,20 @@ class Search extends React.Component {
     super(props)
     this.state = {
       genres: []
-    }
+    };
   }
   getGenres() {
     //make an axios request in this component to get the list of genres from your endpoint GET GENRES
   }
+
   render() {
     return (
       <div className="search">
         <button onClick={() => {this.props.swapFavorites()}}>{this.props.showFaves ? "Show Results" : "Show Favorites"}</button>
         <br/><br/>
-{/* 
 
-
-    Make the select options dynamic from genres !!!
-
-    How can you tell which option has been selected from here?
-
-*/}
+        {/* Make the select options dynamic from genres !!! */}
+        {/* How can you tell which option has been selected from here? */}
 
         <select>
           <option value="theway">The Way</option>
@@ -33,8 +29,9 @@ class Search extends React.Component {
 
         <button>Search</button>
 
-      </div>)
+      </div>
+    );
   }
 }
 
-export default Search
+export default Search;
