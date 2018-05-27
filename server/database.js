@@ -20,3 +20,5 @@ module.exports = {
   saveFavorite,
   deleteFavorite
 };
+
+// hit this endpoint: https://developers.themoviedb.org/3/discover/movie-discover

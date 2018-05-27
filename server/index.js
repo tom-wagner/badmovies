@@ -3,7 +3,7 @@ var bodyParser = require('body-parser');
 var request = require('request')
 var app = express();
 
-var apiHelpers = require('./apiHelpers.js');
+var { getMoviesByGenre, getGenres } = require('./apiHelpers.js');
 
 app.use(bodyParser.json());
 
@@ -11,23 +11,15 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/../client/dist'));
 
 app.get('/search', function(req, res) {
-    // get the search genre     
-
-    // https://www.themoviedb.org/account/signup
-
-    // use this endpoint to search for movies by genres, you will need an API key
-
-    // https://developers.themoviedb.org/3/discover/movie-discover
-
-    // and sort them by horrible votes using the search parameters in the API
+    getMoviesByGenre(req.query)
+        .then(results => res.status(200).send(results.data))
+        .catch(err => res.status(500).send('server error - please try again later!'));
 });
 
 app.get('/genres', function(req, res) {
-    // make an axios request to get the list of official genres
-
-    // from this endpoint https://developers.themoviedb.org/3/genres/get-movie-list which needs your api key
-
-    // send back
+    getGenres()
+        .then(results => res.status(200).send(results.data))
+        .catch(err => res.status(500).send('server error - please try again later!'));
 });
 
 app.post('/save', function(req, res) {
