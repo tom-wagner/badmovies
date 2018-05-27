@@ -24,8 +24,8 @@ app.get('/search', function(req, res) {
 
 app.get('/genres', function(req, res) {
     // make an axios request to get the list of official genres
-
-    // from this endpoint https://developers.themoviedb.org/3/genres/get-movie-list which needs your api key
+    
+    // use this endpoint, which will also require your API key: https://api.themoviedb.org/3/genre/movie/lis
 
     // send back
 });
