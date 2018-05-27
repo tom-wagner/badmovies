@@ -17,7 +17,7 @@ app.get('/search', function(req, res) {
 
     // use this endpoint to search for movies by genres, you will need an API key
 
-    // https://developers.themoviedb.org/3/discover/movie-discover
+    // https://api.themoviedb.org/3/discover/movie
 
     // and sort them by horrible votes using the search parameters in the API
 });
