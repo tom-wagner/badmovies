@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import $ from 'jquery';
+import axios from 'axios';
 // import AnyComponent from './components/filename.jsx'
 import Search from './components/Search.jsx'
 import Movies from './components/Movies.jsx'
@@ -9,41 +9,96 @@ class App extends React.Component {
   constructor(props) {
   	super(props)
   	this.state = {
-      movies: [{deway: "movies"}],
-      favorites: [{deway: "favorites"}],
+      movies: [],
+      favorites: [],
       showFaves: false,
     };
     
-    // you might have to do something important here!
+    this.getMovies = this.getMovies.bind(this);
+    this.saveMovie = this.saveMovie.bind(this);
+    this.deleteMovie = this.deleteMovie.bind(this);
+    this.handleMovieClick = this.handleMovieClick.bind(this);
+    this.swapFavorites = this.swapFavorites.bind(this);
+    this.getFavorites = this.getFavorites.bind(this);
   }
 
-  getMovies() {
-    // make an axios request to your server on the GET SEARCH endpoint
+  // populate action movies and fetch favorites at page load
+  componentDidMount() {
+    this.getMovies(80);
+    this.getFavorites();
   }
 
-  saveMovie() {
-    // same as above but do something diff
+  getMovies(genreID) {
+    axios
+      .get('/search', { params: { with_genres: genreID }})
+      .then(resp => this.setState({ movies: resp.data.results }))
+      .catch(err => console.log({ err }));
   }
 
-  deleteMovie() {
-    // same as above but do something diff
+  getFavorites() {
+    axios
+      .get('/favorites')
+      .then(favorites => this.setState({ favorites: favorites.data }))
+      .catch(err => console.log({ err }));
+  }
+
+  handleMovieClick(movie, idx) {
+    // delete the movie from favorites if the user is on the favorites page
+    if (this.state.showFaves) {
+      this.deleteMovie(movie, idx);
+    } else {
+      // else: save the movie to favorites
+      this.saveMovie(movie);
+    }
+  }
+
+  saveMovie(movie) {
+    axios
+      .post('/save', { data: { movie }})
+      .then(result => {
+        // rudimentary way to let the user know their action succeeded
+        window.alert('movie saved successfully!');
+
+        // helpful details on this syntax: https://stackoverflow.com/a/43003547
+        this.setState({ favorites: [...this.state.favorites, movie] });
+      })
+      .catch(err => {
+        window.alert('movie already saved to your favorites');
+      })
+  }
+
+  deleteMovie(movie, idx) {
+    axios
+      .post('/delete', { data: { id: movie.id }})
+      .then(result => {
+        // update favorites
+        this.getFavorites();
+      })
+      .catch(err => {
+        console.log('Error deleting: ', err);
+      });
   }
 
   swapFavorites() {
-  //dont touch
-    this.setState({
-      showFaves: !this.state.showFaves
-    });
+    // don't touch
+    this.setState({ showFaves: !this.state.showFaves });
   }
 
   render () {
   	return (
       <div className="app">
         <header className="navbar"><h1>Bad Movies</h1></header> 
-        
         <div className="main">
-          <Search swapFavorites={this.swapFavorites} showFaves={this.state.showFaves}/>
-          <Movies movies={this.state.showFaves ? this.state.favorites : this.state.movies} showFaves={this.state.showFaves}/>
+          <Search
+            swapFavorites={ this.swapFavorites }
+            showFaves={ this.state.showFaves }
+            getMovies={ this.getMovies }
+          />
+          <Movies
+            movies={ this.state.showFaves ? this.state.favorites : this.state.movies }
+            showFaves={ this.state.showFaves }
+            handleMovieClick= { this.handleMovieClick }
+          />
         </div>
       </div>
     );

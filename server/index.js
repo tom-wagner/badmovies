@@ -4,6 +4,7 @@ var request = require('request')
 var app = express();
 
 var { getMoviesByGenre, getGenres } = require('./apiHelpers.js');
+var { saveFavorite, deleteFavorite, getAllFavorites } = require('./database.js');
 
 app.use(bodyParser.json());
 
@@ -16,6 +17,16 @@ app.get('/search', function(req, res) {
         .catch(err => res.status(500).send('server error - please try again later!'));
 });
 
+app.get('/favorites', function(req, res) {
+    getAllFavorites((err, docs) => {
+        if (err) {
+            res.status(500).send('server error - please try again later!');
+        } else {
+            res.status(200).send(docs);
+        }
+    });
+});
+
 app.get('/genres', function(req, res) {
     getGenres()
         .then(results => res.status(200).send(results.data))
@@ -23,11 +34,24 @@ app.get('/genres', function(req, res) {
 });
 
 app.post('/save', function(req, res) {
-
+    saveFavorite(req.body.data.movie, (err, success) => {
+        if (err) {
+            res.status(500).send('err: ', err);
+        } else {
+            res.status(200).send('Movie saved successfully!');
+        }
+    });
 });
 
 app.post('/delete', function(req, res) {
-
+    let movieID = req.body.data.id;
+    deleteFavorite(movieID, (err, success) => {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            res.status(201).send('Movie successfully removed from favorites.');
+        }
+    });
 });
 
 app.listen(3000, function() {
