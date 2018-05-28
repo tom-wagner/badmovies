@@ -42,5 +42,5 @@ const deleteFavorite = function(movieID, callback) {
 module.exports = {
   getAllFavorites,
   saveFavorite,
-  deleteFavorite
+  deleteFavorite,
 };
